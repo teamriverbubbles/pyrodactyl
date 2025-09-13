@@ -27,6 +27,7 @@ class DomainFormRequest extends AdminFormRequest
             'dns_config.zone_id' => 'sometimes|string|min:1',
             'is_active' => 'sometimes|boolean',
             'is_default' => 'sometimes|boolean',
+            'use_ip_alias' => 'sometimes|boolean',
         ];
     }
 
@@ -71,7 +72,7 @@ class DomainFormRequest extends AdminFormRequest
         }
 
         // Ensure boolean fields are properly cast
-        foreach (['is_active', 'is_default'] as $field) {
+        foreach (['is_active', 'is_default', 'use_ip_alias'] as $field) {
             if ($this->has($field)) {
                 $this->merge([
                     $field => filter_var($this->input($field), FILTER_VALIDATE_BOOLEAN),

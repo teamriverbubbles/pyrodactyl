@@ -3,6 +3,7 @@
 namespace Pterodactyl\Services\Subdomain\Features;
 
 use Pterodactyl\Models\Server;
+use Pterodactyl\Models\Domain;
 use Pterodactyl\Contracts\Subdomain\SubdomainFeatureInterface;
 
 class RustSubdomainFeature implements SubdomainFeatureInterface
@@ -18,11 +19,12 @@ class RustSubdomainFeature implements SubdomainFeatureInterface
     /**
      * Get the DNS records that need to be created for Rust.
     */
-    public function getDnsRecords(Server $server, string $subdomain, string $domain): array
+    public function getDnsRecords(Server $server, string $subdomain, Domain $domain): array
     {
-        $ip = $server->allocation->ip;
+        // Use IP alias if domain has use_ip_alias enabled, otherwise use actual IP
+        $ip = $domain->use_ip_alias ? $server->allocation->alias : $server->allocation->ip;
         $port = $server->allocation->port;
-        $fullDomain = $subdomain . '.' . $domain;
+        $fullDomain = $subdomain . '.' . $domain->name;
 
         $records = [];
 

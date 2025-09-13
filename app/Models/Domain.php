@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property array $dns_config
  * @property bool $is_active
  * @property bool $is_default
+ * @property bool $use_ip_alias
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|\Pterodactyl\Models\ServerSubdomain[] $serverSubdomains
@@ -41,6 +42,7 @@ class Domain extends Model
         'dns_config',
         'is_active',
         'is_default',
+        'use_ip_alias',
     ];
 
     /**
@@ -50,6 +52,7 @@ class Domain extends Model
         'dns_config' => 'array',
         'is_active' => 'boolean',
         'is_default' => 'boolean',
+        'use_ip_alias' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
     ];
@@ -60,6 +63,7 @@ class Domain extends Model
         'dns_config' => 'required|array',
         'is_active' => 'sometimes|boolean',
         'is_default' => 'sometimes|boolean',
+        'use_ip_alias' => 'sometimes|boolean',
     ];
 
     /**

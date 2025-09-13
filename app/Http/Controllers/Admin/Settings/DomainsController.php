@@ -73,6 +73,7 @@ class DomainsController extends Controller
                     'dns_config' => $data['dns_config'],
                     'is_active' => $data['is_active'] ?? true,
                     'is_default' => $data['is_default'] ?? false,
+                    'use_ip_alias' => $data['use_ip_alias'] ?? false,
                 ]);
             });
 
@@ -136,6 +137,7 @@ class DomainsController extends Controller
                     'dns_config' => $data['dns_config'],
                     'is_active' => $data['is_active'] ?? $domain->is_active,
                     'is_default' => $newIsDefault,
+                    'use_ip_alias' => $data['use_ip_alias'] ?? $domain->use_ip_alias,
                 ]);
             });
 

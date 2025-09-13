@@ -65,7 +65,7 @@ class SubdomainManagementService
         }
 
         // Get DNS records to create
-        $dnsRecords = $feature->getDnsRecords($server, $subdomain, $domain->name);
+        $dnsRecords = $feature->getDnsRecords($server, $subdomain, $domain);
         		
         // Normalize IP addresses in DNS records
         $dnsRecords = $this->normalizeIpAddresses($dnsRecords);

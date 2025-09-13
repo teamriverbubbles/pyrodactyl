@@ -101,6 +101,24 @@
                 </div>
               </div>
               <div class="form-group col-md-4">
+                <label class="control-label">Use IP Alias</label>
+                <div>
+                  <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-primary @if(old('use_ip_alias', $domain->use_ip_alias)) active @endif">
+                      <input type="radio" name="use_ip_alias" value="1"
+                             @if(old('use_ip_alias', $domain->use_ip_alias)) checked @endif> Yes
+                    </label>
+                    <label class="btn btn-primary @if(!old('use_ip_alias', $domain->use_ip_alias)) active @endif">
+                      <input type="radio" name="use_ip_alias" value="0"
+                             @if(!old('use_ip_alias', $domain->use_ip_alias)) checked @endif> No
+                    </label>
+                  </div>
+                  <p class="text-muted small">Whether to use IP alias (if configured) instead of actual IP for DNS records.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-12">
                 <label class="control-label">Active Subdomains</label>
                 <div>
                   <p class="form-control-static">

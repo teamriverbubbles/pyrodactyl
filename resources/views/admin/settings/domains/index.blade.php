@@ -34,6 +34,7 @@
                   <th>DNS Provider</th>
                   <th>Status</th>
                   <th>Default</th>
+                  <th>IP Alias</th>
                   <th>Subdomains</th>
                   <th>Created</th>
                   <th></th>
@@ -56,6 +57,13 @@
                     <td>
                       @if($domain->is_default)
                         <span class="label label-info">Default</span>
+                      @endif
+                    </td>
+                    <td>
+                      @if($domain->use_ip_alias)
+                        <span class="label label-warning">Enabled</span>
+                      @else
+                        <span class="label label-default">Disabled</span>
                       @endif
                     </td>
                     <td>

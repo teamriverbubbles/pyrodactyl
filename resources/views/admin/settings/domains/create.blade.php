@@ -67,7 +67,7 @@
           </div>
           <div class="box-body">
             <div class="row">
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-4">
                 <label class="control-label">Status</label>
                 <div>
                   <div class="btn-group" data-toggle="buttons">
@@ -81,7 +81,7 @@
                   <p class="text-muted small">Whether this domain should be available for subdomain creation.</p>
                 </div>
               </div>
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-4">
                 <label class="control-label">Default Domain</label>
                 <div>
                   <div class="btn-group" data-toggle="buttons">
@@ -94,6 +94,20 @@
                   </div>
                   <p class="text-muted small">Whether this domain should be used as the default for automatic subdomain
                     generation.</p>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Use IP Alias</label>
+                <div>
+                  <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-outline-primary @if(old('use_ip_alias', false)) active @endif">
+                      <input type="radio" name="use_ip_alias" value="1" @if(old('use_ip_alias', false)) checked @endif> Yes
+                    </label>
+                    <label class="btn btn-outline-primary @if(!old('use_ip_alias', false)) active @endif">
+                      <input type="radio" name="use_ip_alias" value="0" @if(!old('use_ip_alias', false)) checked @endif> No
+                    </label>
+                  </div>
+                  <p class="text-muted small">Whether to use IP alias (if configured) instead of actual IP for DNS records.</p>
                 </div>
               </div>
             </div>

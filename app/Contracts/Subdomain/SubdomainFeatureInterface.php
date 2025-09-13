@@ -3,6 +3,7 @@
 namespace Pterodactyl\Contracts\Subdomain;
 
 use Pterodactyl\Models\Server;
+use Pterodactyl\Models\Domain;
 
 interface SubdomainFeatureInterface
 {
@@ -16,8 +17,8 @@ interface SubdomainFeatureInterface
      *
      * @param Server $server The server instance
      * @param string $subdomain The subdomain name
-     * @param string $domain The domain name
+     * @param Domain $domain The domain instance
      * @return array Array of DNS record configurations
      */
-    public function getDnsRecords(Server $server, string $subdomain, string $domain): array;
+    public function getDnsRecords(Server $server, string $subdomain, Domain $domain): array;
 }
