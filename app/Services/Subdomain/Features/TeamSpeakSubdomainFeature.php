@@ -21,8 +21,8 @@ class TeamSpeakSubdomainFeature implements SubdomainFeatureInterface
      */
     public function getDnsRecords(Server $server, string $subdomain, Domain $domain): array
     {
-        // Use IP alias if domain has use_ip_alias enabled, otherwise use actual IP
-        $ip = $domain->use_ip_alias ? $server->allocation->alias : $server->allocation->ip;
+        // Get a valid IP address for DNS records (validates IP alias if used)
+        $ip = $this->getIpForDnsRecord($server->allocation, $domain->use_ip_alias);
         $port = $server->allocation->port;
         $fullDomain = $subdomain . '.' . $domain->name;
 
@@ -87,5 +87,24 @@ class TeamSpeakSubdomainFeature implements SubdomainFeatureInterface
         
         // Create TSDNS record for common TSDNS ports or if the port looks like it might be TSDNS
         return in_array($port, $tsdnsPorts) || ($port >= 41144 && $port <= 41200);
+    }
+
+    /**
+     * Get a valid IP address for DNS records.
+     * Validates that ip_alias is a proper IP address if use_ip_alias is enabled.
+     */
+    protected function getIpForDnsRecord($allocation, bool $useIpAlias): string
+    {
+        if (!$useIpAlias) {
+            return $allocation->ip;
+        }
+
+        // Check if ip_alias exists and is a valid IP address
+        if ($allocation->ip_alias && filter_var($allocation->ip_alias, FILTER_VALIDATE_IP)) {
+            return $allocation->ip_alias;
+        }
+
+        // Fall back to actual IP if alias is not a valid IP
+        return $allocation->ip;
     }
 }
