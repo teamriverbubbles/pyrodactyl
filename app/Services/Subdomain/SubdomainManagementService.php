@@ -60,13 +60,13 @@ class SubdomainManagementService
         // Get DNS provider
         try {
             $dnsProvider = $this->getDnsProvider($domain);
-        } catch (\Exception $e) {            
+        } catch (\Exception $e) {
             throw new \Exception('DNS service temporarily unavailable.');
         }
 
         // Get DNS records to create
         $dnsRecords = $feature->getDnsRecords($server, $subdomain, $domain);
-        		
+
         // Normalize IP addresses in DNS records
         $dnsRecords = $this->normalizeIpAddresses($dnsRecords);
 
@@ -95,7 +95,7 @@ class SubdomainManagementService
             // Create DNS records first
             $createdRecordIds = [];
             $rollbackRequired = false;
-            
+
             try {
                 foreach ($dnsRecords as $record) {
                     $recordId = $dnsProvider->createRecord(
@@ -154,7 +154,7 @@ class SubdomainManagementService
             throw new \Exception('DNS service temporarily unavailable.');
         }
 
-        $newDnsRecords = $feature->getDnsRecords($server, $serverSubdomain->subdomain, $domain->name);
+        $newDnsRecords = $feature->getDnsRecords($server, $serverSubdomain->subdomain, $domain);
         $newDnsRecords = $this->normalizeIpAddresses($newDnsRecords);
 
         DB::transaction(function () use ($serverSubdomain, $dnsProvider, $domain, $newDnsRecords) {
@@ -205,7 +205,7 @@ class SubdomainManagementService
                 // Update database record
                 $serverSubdomain->update([
                     'dns_records' => $updatedRecordIds,
-                ]);    
+                ]);
             } catch (\Exception $e) {
                 // Attempt rollback of DNS changes
                 $this->rollbackDnsChanges($dnsProvider, $domain->name, $rollbackData, $updatedRecordIds);
@@ -224,19 +224,19 @@ class SubdomainManagementService
     public function deleteSubdomain(ServerSubdomain $serverSubdomain): void
     {
         $domain = $serverSubdomain->domain;
-        
+
         DB::transaction(function () use ($serverSubdomain, $domain) {
             $dnsRecordsToDelete = $serverSubdomain->dns_records ?? [];
-            
+
             try {
                 // First, mark as inactive in database to prevent new operations
                 $serverSubdomain->update(['is_active' => false]);
-                
+
                 // Try to delete DNS records if provider is available
                 if (!empty($dnsRecordsToDelete)) {
                     try {
                         $dnsProvider = $this->getDnsProvider($domain);
-                        
+
                         // Delete DNS records - don't fail the entire operation if some DNS deletions fail
                         foreach ($dnsRecordsToDelete as $recordId) {
                             try {
@@ -245,7 +245,7 @@ class SubdomainManagementService
                                 Log::warning("Failed to delete DNS record {$recordId} during subdomain deletion: {$e->getMessage()}");
                             }
                         }
-                        
+
                     } catch (\Exception $e) {
                         // DNS provider unavailable, log and continue with database deletion
                         Log::warning("DNS provider unavailable during subdomain deletion for {$serverSubdomain->full_domain}: {$e->getMessage()}");
@@ -254,7 +254,7 @@ class SubdomainManagementService
 
                 // Delete database record - this should always succeed after marking inactive
                 $serverSubdomain->delete();
-                
+
             } catch (\Exception $e) {
                 Log::error("Failed to delete subdomain {$serverSubdomain->full_domain}: {$e->getMessage()}");
                 throw new \Exception('Failed to delete subdomain completely.');
@@ -359,37 +359,134 @@ class SubdomainManagementService
 
         return array_map('strtolower', [
             // Web & infra
-            'www', 'web', 'origin', 'edge', 'cdn', 'static', 'assets', 'files', 'media', 'img', 'images', 'downloads', 'dl',
+            'www',
+            'web',
+            'origin',
+            'edge',
+            'cdn',
+            'static',
+            'assets',
+            'files',
+            'media',
+            'img',
+            'images',
+            'downloads',
+            'dl',
 
             // Email & DNS
-            'mail', 'webmail', 'smtp', 'imap', 'pop', 'pop3', 'mx', 'dns', 'ns',
-            'autodiscover', 'autoconfig', 'mta-sts', 'openpgpkey',
+            'mail',
+            'webmail',
+            'smtp',
+            'imap',
+            'pop',
+            'pop3',
+            'mx',
+            'dns',
+            'ns',
+            'autodiscover',
+            'autoconfig',
+            'mta-sts',
+            'openpgpkey',
 
             // Admin & control planes
-            'admin', 'administrator', 'root', 'sysadmin', 'panel', 'cp', 'cpanel', 'whm', 'webdisk',
-            'status', 'monitor', 'monitoring', 'health', 'uptime', 'metrics', 'logs', 'logging',
+            'admin',
+            'administrator',
+            'root',
+            'sysadmin',
+            'panel',
+            'cp',
+            'cpanel',
+            'whm',
+            'webdisk',
+            'status',
+            'monitor',
+            'monitoring',
+            'health',
+            'uptime',
+            'metrics',
+            'logs',
+            'logging',
 
             // Auth & accounts
-            'login', 'signin', 'sign-in', 'signup', 'sign-up', 'register', 'account', 'accounts',
-            'auth', 'oauth', 'oauth2', 'sso', 'id', 'identity', 'secure', 'passwd', 'password',
+            'login',
+            'signin',
+            'sign-in',
+            'signup',
+            'sign-up',
+            'register',
+            'account',
+            'accounts',
+            'auth',
+            'oauth',
+            'oauth2',
+            'sso',
+            'id',
+            'identity',
+            'secure',
+            'passwd',
+            'password',
 
             // APIs & developer endpoints
-            'api', 'apis', 'dev', 'development', 'test', 'testing', 'qa', 'stage', 'staging',
-            'preprod', 'preview', 'sandbox', 'prod', 'production', 'demo',
+            'api',
+            'apis',
+            'dev',
+            'development',
+            'test',
+            'testing',
+            'qa',
+            'stage',
+            'staging',
+            'preprod',
+            'preview',
+            'sandbox',
+            'prod',
+            'production',
+            'demo',
 
             // Commerce / portals / docs
-            'billing', 'invoice', 'invoices', 'payments', 'pay', 'store', 'shop',
-            'support', 'help', 'docs', 'documentation', 'wiki', 'portal', 'dashboard',
+            'billing',
+            'invoice',
+            'invoices',
+            'payments',
+            'pay',
+            'store',
+            'shop',
+            'support',
+            'help',
+            'docs',
+            'documentation',
+            'wiki',
+            'portal',
+            'dashboard',
 
             // File transfer
-            'ftp', 'sftp', 'tftp',
+            'ftp',
+            'sftp',
+            'tftp',
 
             // CI/CD & tooling often probed by scanners
-            'git', 'github', 'gitlab', 'gitea', 'bitbucket', 'hg', 'svn',
-            'jenkins', 'grafana', 'prometheus', 'kibana', 'elastic', 'sonarqube', 'nexus',
+            'git',
+            'github',
+            'gitlab',
+            'gitea',
+            'bitbucket',
+            'hg',
+            'svn',
+            'jenkins',
+            'grafana',
+            'prometheus',
+            'kibana',
+            'elastic',
+            'sonarqube',
+            'nexus',
 
             // Misc safety
-            'localhost', 'local', 'loopback', 'default', 'undefined', 'null',
+            'localhost',
+            'local',
+            'loopback',
+            'default',
+            'undefined',
+            'null',
         ]);
     }
 
@@ -439,7 +536,7 @@ class SubdomainManagementService
     private function validateSubdomain(string $subdomain, SubdomainFeatureInterface $feature, Domain $domain): void
     {
         $availabilityResult = $this->checkSubdomainAvailability($subdomain, $domain, null);
-        
+
         if (!$availabilityResult['available']) {
             throw new \Exception($availabilityResult['message']);
         }
@@ -456,7 +553,7 @@ class SubdomainManagementService
     {
         $providerName = $domain->dns_provider;
 
-        if (!isset($this->dnsProviders[$providerName])) {            
+        if (!isset($this->dnsProviders[$providerName])) {
             throw new \Exception("Unsupported DNS provider: {$providerName}");
         }
 
