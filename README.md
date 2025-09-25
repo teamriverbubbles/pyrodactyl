@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://github.com/pyrohost/pyrodactyl/actions/workflows/docker.yaml">
-    <img src="https://github.com/pyrohost/pyrodactyl/actions/workflows/docker.yaml/badge.svg" alt="Docker">
+    <img src="https://github.com/pyrohost/pyrodactyl/actions/workflows/build-and-release.yaml/badge.svg" alt="Docker">
   </a>
 </p>
 
@@ -29,7 +29,7 @@
 
 Pyrodactyl is the Pterodactyl-based game server management panel that focuses on performance enhancements, a reimagined, accessible interface, and top-tier developer experience. Builds faster, compiles smaller: Pyrodactyl is the world's best Pterodactyl.
 
-[![Dashboard Image](https://i.imgur.com/YqfgMYs.jpeg)](https://panel.pyro.host)
+[![Dashboard Image](./.github/server-menu.png)](https://panel.pyro.host)
 
 ## Changes from vanilla Pterodactyl
 
